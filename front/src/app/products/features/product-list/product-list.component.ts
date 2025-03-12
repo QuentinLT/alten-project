@@ -7,6 +7,7 @@ import { CardModule } from "primeng/card";
 import { DataViewModule } from 'primeng/dataview';
 import { DialogModule } from 'primeng/dialog';
 import { CurrencyPipe } from "@angular/common";
+import { CartService } from "app/services/cart.service";
 
 const emptyProduct: Product = {
   id: 0,
@@ -36,6 +37,8 @@ export class ProductListComponent implements OnInit {
   private readonly productsService = inject(ProductsService);
 
   public readonly products = this.productsService.products;
+
+  private readonly cartService = inject(CartService);
 
   public isDialogVisible = false;
   public isCreation = false;
@@ -76,5 +79,25 @@ export class ProductListComponent implements OnInit {
 
   private closeDialog() {
     this.isDialogVisible = false;
+  }
+
+  public addToCart(product: Product) {
+    this.cartService.addToCart(product).subscribe();
+  }
+
+  public removeFromCart(product: Product) {
+    this.cartService.removeFromCart(product.id).subscribe();
+  }
+
+  public isInCart(product: Product): boolean {
+    return this.cartService.isInCart(product.id);
+  }
+
+  public canDeleteProduct(product: Product): boolean {
+    return this.cartService.canDeleteProduct(product.id);
+  }
+
+  public getQuantityInCart(product: Product): number {
+    return this.cartService.getQuantityInCart(product.id);
   }
 }
