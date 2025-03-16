@@ -8,6 +8,7 @@ import { DataViewModule } from 'primeng/dataview';
 import { DialogModule } from 'primeng/dialog';
 import { CurrencyPipe } from "@angular/common";
 import { CartService } from "app/services/cart.service";
+import { FormsModule } from '@angular/forms';
 
 const emptyProduct: Product = {
   id: 0,
@@ -31,7 +32,7 @@ const emptyProduct: Product = {
   templateUrl: "./product-list.component.html",
   styleUrls: ["./product-list.component.scss"],
   standalone: true,
-  imports: [DataViewModule, CardModule, ButtonModule, DialogModule, ProductFormComponent, CurrencyPipe],
+  imports: [FormsModule, DataViewModule, CardModule, ButtonModule, DialogModule, ProductFormComponent, CurrencyPipe],
 })
 export class ProductListComponent implements OnInit {
   private readonly productsService = inject(ProductsService);
@@ -44,9 +45,18 @@ export class ProductListComponent implements OnInit {
   public isCreation = false;
   public readonly editedProduct = signal<Product>(emptyProduct);
 
+  term: string = '';
+
   ngOnInit() {
     this.productsService.get().subscribe();
   }
+
+/* set(..) ne fonctionne pas sur products
+  public onFilter() {
+    const lowerCaseTerm = this.term.toLowerCase();
+    this.products.set(this.products().filter(product => product.name.toLowerCase().includes(lowerCaseTerm)));
+  }
+*/
 
   public onCreate() {
     this.isCreation = true;

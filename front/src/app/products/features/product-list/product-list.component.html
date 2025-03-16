@@ -1,8 +1,10 @@
 <h1 class="text-center">Liste des produits</h1>
 
+<!-- L'implémentation du filtrage n'est pas correcte dans le ts -->
+<input type="text" class="p-2 border rounded w-80 mb-4 block mx-auto" [(ngModel)]="term" placeholder="Rechercher un produit...">
 <p-button label="Créer produit" (onClick)="onCreate()" class="block text-center"/>
 
-<p-dataView #dv [value]="products()">
+<p-dataView #dv [value]="products()" [paginator]="true" [rows]="10">
     <ng-template pTemplate="list" let-products>
         @for (product of products; track product) {
             <p-card class="block mb-2">
