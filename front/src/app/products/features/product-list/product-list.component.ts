@@ -47,8 +47,14 @@ export class ProductListComponent implements OnInit {
 
   term: string = '';
 
+  public cartProducts = this.cartService.cart;
+  public isCartDialogVisible = false;
+
   ngOnInit() {
     this.productsService.get().subscribe();
+    this.cartService.cartOpened$.subscribe(() => {
+      this.openCartDialog();
+    });
   }
 
 /* set(..) ne fonctionne pas sur products
@@ -57,6 +63,27 @@ export class ProductListComponent implements OnInit {
     this.products.set(this.products().filter(product => product.name.toLowerCase().includes(lowerCaseTerm)));
   }
 */
+
+  public openCartDialog() {
+    this.isCartDialogVisible = true;
+  }
+
+  public closeCartDialog() {
+    this.isCartDialogVisible = false;
+  }
+
+  public getCartProducts() {
+    return this.cartService.getCartProducts();
+  }
+
+  public getTotalPrice(): number {
+    let total = 0;
+    for (let cartProduct of this.getCartProducts()) {
+        total += cartProduct.product.price * cartProduct.quantity;
+    }
+    return total;
+}
+
 
   public onCreate() {
     this.isCreation = true;

@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Product } from 'app/products/data-access/product.model';
 import { HttpClient } from "@angular/common/http";
-import { catchError, Observable, of, tap } from "rxjs";
+import { catchError, Observable, of, tap, Subject} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +10,8 @@ import { catchError, Observable, of, tap } from "rxjs";
   private readonly path = "/api/products";
 
   public cart = signal<Product[]>([]);
+  private cartOpened = new Subject<void>();
+  public cartOpened$ = this.cartOpened.asObservable();
 
   public addToCart(product: Product): Observable<boolean> {
     return this.http.post<boolean>(this.path, product).pipe(
@@ -40,7 +42,7 @@ import { catchError, Observable, of, tap } from "rxjs";
   }
 
   public isInCart(productId: number): boolean {
-    return this.cart().filter(item => item.id === productId).length > 0;
+    return this.cart().filter(product => product.id === productId).length > 0;
   }
 
   public canDeleteProduct(productId: number): boolean {
@@ -48,6 +50,23 @@ import { catchError, Observable, of, tap } from "rxjs";
   }
 
   public getQuantityInCart(productId: number): number {
-    return this.cart().filter(item => item.id === productId).length;
-  }  
+    return this.cart().filter(product => product.id === productId).length;
+  }
+
+  public openCart(): void {
+    this.cartOpened.next();
+  }
+
+  public getCartProducts(): { product: Product; quantity: number }[] {
+    let cartProducts: { [key: number]: { product: Product; quantity: number } } = {};
+  
+    for (let product of this.cart()) {
+      if (cartProducts[product.id]) {
+        cartProducts[product.id].quantity++;
+      } else {
+        cartProducts[product.id] = { product: product, quantity: 1 };
+      }
+    }
+    return Object.values(cartProducts);
+  }
 }

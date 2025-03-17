@@ -47,3 +47,37 @@
         (cancel)="onCancel()"
     />
 </p-dialog>
+<p-dialog [(visible)]="isCartDialogVisible" [style]="{ width: '50vw'}" header="Panier" modal="true">
+        @if (getCartProducts().length > 0) {
+                @for (cartProduct of getCartProducts(); track cartProduct.product.id) {
+                    <p-card class="block mb-2">
+                        <div class="mb-2">
+                            <strong class="text-lg">{{ cartProduct.product.name }}</strong>
+                            <span class="ml-2 text-gray-600">({{ cartProduct.quantity }})</span>
+                            <span class="ml-2 text-gray-600">
+                                : {{ cartProduct.product.price | currency:'EUR' }}
+                            </span>
+                        </div>
+                        <div class="mb-2">
+                            <span class="text-green-600 font-semibold">
+                                Prix total : {{ (cartProduct.product.price * cartProduct.quantity) | currency:'EUR' }}
+                            </span>
+                        </div>
+                        <div class="flex gap-2 mb-2">
+                            <p-button icon="pi pi-plus" severity="success" (click)="addToCart(cartProduct.product)"/>
+                            <p-button icon="pi pi-trash" severity="danger" (click)="removeFromCart(cartProduct.product)"/>
+                        </div>
+                    </p-card>
+                }
+            <div class="mt-4">
+                <strong class="text-lg">Total :</strong>
+                <span class="text-green-600 font-semibold text-lg">{{ getTotalPrice() | currency:'EUR' }}</span>
+            </div>
+
+        } @else {
+            <p class="text-center">Le panier est vide.</p>
+        }
+    <p-footer>
+        <p-button label="Fermer" (click)="closeCartDialog()" severity="help"/>
+    </p-footer>
+</p-dialog>

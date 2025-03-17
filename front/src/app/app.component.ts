@@ -19,4 +19,8 @@ export class AppComponent {
   private readonly cartService = inject(CartService);
 
   public cart = this.cartService.cart;
+
+    public openCart() {
+      this.cartService.openCart();
+    }
 }
